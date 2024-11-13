@@ -17,7 +17,7 @@ This is a Django REST Framework project for managing invoices and their details.
 
    ```bash
    git clone https://github.com/priyanshuarora595/invoice.git
-   cd invoice-project
+   cd invoice
    ```
 2. Create and activate a virtual environment:
 
