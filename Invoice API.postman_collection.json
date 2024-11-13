@@ -1,0 +1,647 @@
+{
+	"info": {
+		"_postman_id": "8099aa48-b87c-4ff4-acee-9247574e12da",
+		"name": "Invoice API",
+		"description": "Collection for testing Invoice API endpoints with environment variables and dynamic requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23425485"
+	},
+	"item": [
+		{
+			"name": "Invoices",
+			"item": [
+				{
+					"name": "Create Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"// Save invoice ID for later use",
+									"if (response.id) {",
+									"    pm.environment.set(\"last_invoice_id\", response.id);",
+									"}",
+									"",
+									"// Basic response tests",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has all required fields\", function () {",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response).to.have.property('invoice_number');",
+									"    pm.expect(response).to.have.property('customer_name');",
+									"    pm.expect(response).to.have.property('date');",
+									"    pm.expect(response).to.have.property('details');",
+									"    pm.expect(response.details).to.be.an('array');",
+									"});",
+									"",
+									"// Save invoice number for later use",
+									"if (response.invoice_number) {",
+									"    pm.environment.set(\"last_invoice_number\", response.invoice_number);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate unique invoice number",
+									"const timestamp = new Date().getTime();",
+									"const invoiceNum = `INV${timestamp.toString().slice(-6)}`;",
+									"pm.environment.set(\"dynamic_invoice_number\", invoiceNum);",
+									"",
+									"// Get today's date in YYYY-MM-DD format",
+									"const today = new Date().toISOString().split('T')[0];",
+									"pm.environment.set(\"today_date\", today);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"invoice_number\": \"{{dynamic_invoice_number}}\",\n    \"customer_name\": \"{{$randomFullName}}\",\n    \"date\": \"{{today_date}}\",\n    \"details\": [\n        {\n            \"description\": \"Product A\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        },\n        {\n            \"description\": \"Product B\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/invoices/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invoices",
+								""
+							]
+						},
+						"description": "Create a new invoice with dynamic data"
+					},
+					"response": [
+						{
+							"name": "Create Invoice",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"invoice_number\": \"{{dynamic_invoice_number}}\",\n    \"customer_name\": \"{{$randomFullName}}\",\n    \"date\": \"{{today_date}}\",\n    \"details\": [\n        {\n            \"description\": \"Product A\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        },\n        {\n            \"description\": \"Product B\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/invoices/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invoices",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 08:01:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "282"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"invoice_number\": \"INV866350\",\n    \"customer_name\": \"Carmen Senger\",\n    \"date\": \"2024-11-13\",\n    \"details\": [\n        {\n            \"id\": 1,\n            \"description\": \"Product A\",\n            \"quantity\": 253,\n            \"price\": \"35.80\",\n            \"line_total\": \"9057.40\"\n        },\n        {\n            \"id\": 2,\n            \"description\": \"Product B\",\n            \"quantity\": 534,\n            \"price\": \"528.52\",\n            \"line_total\": \"282229.68\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Invoices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(response).to.be.an('array');",
+									"});",
+									"",
+									"if (response.length > 0) {",
+									"    pm.test(\"Invoices have required fields\", function () {",
+									"        pm.expect(response[0]).to.have.property('id');",
+									"        pm.expect(response[0]).to.have.property('invoice_number');",
+									"        pm.expect(response[0]).to.have.property('customer_name');",
+									"        pm.expect(response[0]).to.have.property('date');",
+									"        pm.expect(response[0]).to.have.property('details');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/invoices/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invoices",
+								""
+							]
+						},
+						"description": "Retrieve all invoices"
+					},
+					"response": [
+						{
+							"name": "Get All Invoices",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/invoices/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invoices",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 08:01:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "284"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"invoice_number\": \"INV866350\",\n        \"customer_name\": \"Carmen Senger\",\n        \"date\": \"2024-11-13\",\n        \"details\": [\n            {\n                \"id\": 1,\n                \"description\": \"Product A\",\n                \"quantity\": 253,\n                \"price\": \"35.80\",\n                \"line_total\": \"9057.40\"\n            },\n            {\n                \"id\": 2,\n                \"description\": \"Product B\",\n                \"quantity\": 534,\n                \"price\": \"528.52\",\n                \"line_total\": \"282229.68\"\n            }\n        ]\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Invoice by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Invoice has all required fields\", function () {",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response).to.have.property('invoice_number');",
+									"    pm.expect(response).to.have.property('customer_name');",
+									"    pm.expect(response).to.have.property('date');",
+									"    pm.expect(response).to.have.property('details');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/invoices/{{last_invoice_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invoices",
+								"{{last_invoice_id}}",
+								""
+							]
+						},
+						"description": "Retrieve a specific invoice by ID"
+					},
+					"response": [
+						{
+							"name": "Get Invoice by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/invoices/{{last_invoice_id}}/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invoices",
+										"{{last_invoice_id}}",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 08:01:41 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "282"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"invoice_number\": \"INV866350\",\n    \"customer_name\": \"Carmen Senger\",\n    \"date\": \"2024-11-13\",\n    \"details\": [\n        {\n            \"id\": 1,\n            \"description\": \"Product A\",\n            \"quantity\": 253,\n            \"price\": \"35.80\",\n            \"line_total\": \"9057.40\"\n        },\n        {\n            \"id\": 2,\n            \"description\": \"Product B\",\n            \"quantity\": 534,\n            \"price\": \"528.52\",\n            \"line_total\": \"282229.68\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Updated invoice has correct customer name\", function () {",
+									"    pm.expect(response.customer_name).to.include('Updated');",
+									"});",
+									"",
+									"pm.test(\"Details were updated\", function () {",
+									"    pm.expect(response.details).to.be.an('array');",
+									"    pm.expect(response.details).to.have.lengthOf(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"invoice_number\": \"{{last_invoice_number}}\",\n    \"customer_name\": \"Updated {{$randomFullName}}\",\n    \"date\": \"{{today_date}}\",\n    \"details\": [\n        {\n            \"description\": \"Updated Product A\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        },\n        {\n            \"description\": \"Updated Product B\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        },\n        {\n            \"description\": \"New Product C\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/invoices/{{last_invoice_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invoices",
+								"{{last_invoice_id}}",
+								""
+							]
+						},
+						"description": "Update an existing invoice"
+					},
+					"response": [
+						{
+							"name": "Update Invoice",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"invoice_number\": \"{{last_invoice_number}}\",\n    \"customer_name\": \"Updated {{$randomFullName}}\",\n    \"date\": \"{{today_date}}\",\n    \"details\": [\n        {\n            \"description\": \"Updated Product A\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        },\n        {\n            \"description\": \"Updated Product B\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        },\n        {\n            \"description\": \"New Product C\",\n            \"quantity\": {{$randomInt}},\n            \"price\": {{$randomPrice}}\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/invoices/{{last_invoice_id}}/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invoices",
+										"{{last_invoice_id}}",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 08:01:48 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "402"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"invoice_number\": \"INV866350\",\n    \"customer_name\": \"Updated Ida Renner\",\n    \"date\": \"2024-11-13\",\n    \"details\": [\n        {\n            \"id\": 3,\n            \"description\": \"Updated Product A\",\n            \"quantity\": 874,\n            \"price\": \"464.21\",\n            \"line_total\": \"405719.54\"\n        },\n        {\n            \"id\": 4,\n            \"description\": \"Updated Product B\",\n            \"quantity\": 407,\n            \"price\": \"307.52\",\n            \"line_total\": \"125160.64\"\n        },\n        {\n            \"id\": 5,\n            \"description\": \"New Product C\",\n            \"quantity\": 746,\n            \"price\": \"581.51\",\n            \"line_total\": \"433806.46\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"// Clear environment variables",
+									"pm.environment.unset(\"last_invoice_id\");",
+									"pm.environment.unset(\"last_invoice_number\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/invoices/{{last_invoice_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invoices",
+								"{{last_invoice_id}}",
+								""
+							]
+						},
+						"description": "Delete an invoice"
+					},
+					"response": [
+						{
+							"name": "Delete Invoice",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/invoices/{{last_invoice_id}}/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invoices",
+										"{{last_invoice_id}}",
+										""
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 08:02:00 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.5"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Custom dynamic variable for random price",
+					"pm.variables.set('randomPrice', (Math.random() * 100 + 10).toFixed(2));"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}

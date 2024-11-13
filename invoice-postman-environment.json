@@ -1,0 +1,35 @@
+{
+	"name": "Invoice API Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "https://invoice.pythonanywhere.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "last_invoice_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "last_invoice_number",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "dynamic_invoice_number",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "today_date",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	]
+}
